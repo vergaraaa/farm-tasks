@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from database import get_all_tasks, create_task
+from models import Task
 
 app = FastAPI()
 
@@ -8,20 +10,27 @@ def welcome():
 
 @app.get("/api/tasks")
 async def get_tasks(): 
-    return "all tasks"
+    tasks = await get_all_tasks()
+    return tasks
 
-@app.post("/api/tasks")
-async def create_task(): 
-    return "create task"
+@app.post("/api/tasks", response_model=Task)
+async def save_task(task: Task): 
+    newTask = await create_task(task.model_dump())
 
-@app.get("/api/tasks/{id}")
-async def get_task(): 
-    return "single tasks"
+    if newTask: 
+        return newTask
+    
+    raise HTTPException(400, "Something went wrong")
 
-@app.put("/api/tasks/{id}")
-async def update_task(): 
-    return "updating task"
 
-@app.delete("/api/tasks/{id}")
-async def delete_task(): 
-    return "delete task"
+# @app.get("/api/tasks/{id}")
+# async def get_task(): 
+#     return "single tasks"
+
+# @app.put("/api/tasks/{id}")
+# async def update_task(): 
+#     return "updating task"
+
+# @app.delete("/api/tasks/{id}")
+# async def delete_task(): 
+#     return "delete task"

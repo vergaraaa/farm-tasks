@@ -12,9 +12,9 @@ async def get_one_task_id(id):
 
 async def get_all_tasks():
     tasks = []
-    cursor = await collection.find({})
-    async for doc in cursor:
-        tasks.append(Task(**doc))
+    cursor = collection.find({})
+    async for document in cursor:
+        tasks.append(Task(**document))
 
     return tasks
 
